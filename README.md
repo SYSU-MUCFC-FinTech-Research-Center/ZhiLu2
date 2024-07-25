@@ -106,7 +106,8 @@ while True:
 
 <p align="center">
 
-![数据配比](doc/img/image.png)
+![image](https://github.com/user-attachments/assets/017d38a6-4a63-41a4-bff7-cf7e9558d6a1)
+
 
 </p>
 

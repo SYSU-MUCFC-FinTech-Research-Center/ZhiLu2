@@ -1,4 +1,4 @@
-98<h1 align="center">ZhiLu2(智鹿2)</h1>
+<h1 align="center">ZhiLu2(智鹿2)</h1>
 
 <p align="center">&nbsp;</p>
 

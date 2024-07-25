@@ -79,7 +79,7 @@ while True:
 
 **🚀 高效训练**
 
-我们使用llama-factory作为训练框架，并配备多块A100显卡，通过DeepSpeed（ds）实现数据并行、模型并行、管道并行和张量并行等优化技术。在微调方法的选择上，我们对Full-Rank FT、LORA、BAdam、LoRA+和DoRA进行了详细比较，评估了各方法在训练时间、显卡占用、推理时间和模型性能等多项指标上的表现。最终，我们决定采用DoRA进行微调，以获得最佳的性价比和性能。
+我们使用[llama-factory](https://github.com/hiyouga/LLaMA-Factory)作为训练框架，并配备多块A100显卡，通过DeepSpeed（ds）实现数据并行、模型并行、管道并行和张量并行等优化技术。在微调方法的选择上，我们对Full-Rank FT、LORA、BAdam、LoRA+和DoRA进行了详细比较，评估了各方法在训练时间、显卡占用、推理时间和模型性能等多项指标上的表现。最终，我们决定采用[DoRA](https://github.com/NVlabs/DoRA)进行微调，以获得最佳的性价比和性能。
 
 **⚡ 加速技术**
 

@@ -106,7 +106,8 @@ while True:
 
 <p align="center">
 
-![image](https://github.com/user-attachments/assets/017d38a6-4a63-41a4-bff7-cf7e9558d6a1)
+![image](https://github.com/user-attachments/assets/5a15d5b8-e6de-4ec4-908a-dfb5a065fe9c)
+
 
 
 </p>

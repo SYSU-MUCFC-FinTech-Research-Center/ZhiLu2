@@ -37,7 +37,7 @@
 - 🍭 合成数据质量检测
 
 ## 💽 快速开始
-
+ **模型本体**
 ```python
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
@@ -71,7 +71,80 @@ while True:
     response = outputs[0][input_ids.shape[-1]:]
     print(tokenizer.decode(response, skip_special_tokens=True))
 ```
+ **模型本体&lora**
+```python
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from peft import PeftModel
 
+model_id = "model_path"
+lora_model_id = "lora_path"
+
+# Load tokenizer and model
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForCausalLM.from_pretrained(model_id)
+model = PeftModel.from_pretrained(model, lora_model_id)
+
+# Move model to specific GPU if needed
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+model.to(device)
+
+# Construct prompt
+DEFAULT_SYSTEM_PROMPT = """You are a helpful assistant. 你是一个乐于助人的助手。"""
+prompt = "你好？"
+messages = [{"role": "user", "content": prompt, 'system_prompt': DEFAULT_SYSTEM_PROMPT}]
+
+# Encode inputs
+input_ids = tokenizer.apply_chat_template(messages, add_generation_prompt=True, return_tensors="pt").to(device)
+
+# Generate output
+outputs = model.generate(
+    input_ids,
+    max_new_tokens=1024,
+    min_new_tokens=1,
+    do_sample=True,
+    temperature=0.4,
+    top_p=0.9,
+)
+
+response = outputs[0][input_ids.shape[-1]:]
+print(tokenizer.decode(response, skip_special_tokens=True))
+```
+
+ **vllm**
+ ```python
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+
+model_id = "your model path"
+
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForCausalLM.from_pretrained(
+    model_id, torch_dtype="auto", device_map="auto"
+)
+
+DEFAULT_SYSTEM_PROMPT = """You are a helpful assistant. 你是一个乐于助人的助手。"""
+while True:
+    prompt = input()
+    messages = [
+        {"role": "user", "content": prompt,'system_prompt':DEFAULT_SYSTEM_PROMPT},
+    ]
+
+    input_ids = tokenizer.apply_chat_template(
+        messages, add_generation_prompt=True, return_tensors="pt"
+    ).to(model.device)
+
+    outputs = model.generate(
+        input_ids,
+        max_new_tokens=8192,
+        min_new_tokens=50,
+        do_sample=True,
+        temperature=0.4,
+        top_p=0.9,
+    )
+    response = outputs[0][input_ids.shape[-1]:]
+    print(tokenizer.decode(response, skip_special_tokens=True))
+```
 
 ##  训练细节
 

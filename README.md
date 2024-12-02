@@ -112,38 +112,44 @@ print(tokenizer.decode(response, skip_special_tokens=True))
 ```
 
  **vllm**
- ```python
-from transformers import AutoTokenizer, AutoModelForCausalLM
+```python
+from vllm import LLM, SamplingParams
+from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
 
+# 初始化 LLM，指定模型名称或路径
+llm = LLM(model="model_path")
+tokenizer = AutoTokenizer.from_pretrained("model_path")
 
-model_id = "your model path"
+prompts = [
+    "你好，你是谁？",
+    "请你计算1+1等于几",
+    "我帅吗",
+]
 
-tokenizer = AutoTokenizer.from_pretrained(model_id)
-model = AutoModelForCausalLM.from_pretrained(
-    model_id, torch_dtype="auto", device_map="auto"
-)
+texts = []
 
-DEFAULT_SYSTEM_PROMPT = """You are a helpful assistant. 你是一个乐于助人的助手。"""
-while True:
-    prompt = input()
-    messages = [
-        {"role": "user", "content": prompt,'system_prompt':DEFAULT_SYSTEM_PROMPT},
-    ]
+sampling_params = SamplingParams(temperature=0.8, top_p=0.95,min_tokens = 1,max_tokens = 512)
 
-    input_ids = tokenizer.apply_chat_template(
-        messages, add_generation_prompt=True, return_tensors="pt"
-    ).to(model.device)
+default_system = 'You are a helpful assistant. 你是一个乐于助人的助手。'
+for prompt in prompts:
+    message = [{
+                'role': 'system',
+                'content': default_system
+            }, {
+                'role': 'user',
+                'content': prompt
+            }]
+    text = tokenizer.apply_chat_template(message,tokenize=False,add_generation_prompt=True)
+    texts.append(text)
+outputs = llm.generate(texts, sampling_params, use_tqdm=False)
 
-    outputs = model.generate(
-        input_ids,
-        max_new_tokens=8192,
-        min_new_tokens=50,
-        do_sample=True,
-        temperature=0.4,
-        top_p=0.9,
-    )
-    response = outputs[0][input_ids.shape[-1]:]
-    print(tokenizer.decode(response, skip_special_tokens=True))
+for i, prompt in enumerate(prompts):
+    question = prompt
+    answer = outputs[i].outputs[0].text  
+    print(f"问题：{question}")
+    print(f"回答：{answer}")
+    print("---------------------")
+
 ```
 
 ##  训练细节
